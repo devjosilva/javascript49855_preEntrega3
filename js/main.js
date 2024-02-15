@@ -1,6 +1,11 @@
 const nombre = document.getElementById("name")
 const direccion = document.getElementById("direccion")
 const comuna = document.getElementById("comuna")
+const comunaFilter = document.getElementById("filterComuna")
+const tableContainer = document.getElementById('table-container');
+const btn =  document.getElementById("btnAdd")
+const container = document.getElementById("containerAdd")
+const btnFilter =  document.getElementById("btnFilter")
 
 const Persona = function(nombre, direccion, comuna){
     this.nombre = nombre
@@ -18,15 +23,20 @@ let p6 = new Persona("Max", "Los libertadores 123", "Santiago")
 var listaPersonas = [p1,p2,p3,p4,p5,p6]
 
 function filtrarComuna(){
-    let comuna = prompt("Ingrese la comuna a buscar").toUpperCase().trim();
-    let resultado = listaPersonas.filter((x)=>x.comuna.toUpperCase().includes(comuna))
+    if (filterComuna.value == "")
+    {
+        alert("Datos incorrectos. ")
+        return 
+    }   
+
+    let resultado = listaPersonas.filter((x)=>x.comuna.toUpperCase().includes(filterComuna.value.toUpperCase()))
 
     if (resultado.length > 0)
     {
         console.table(resultado)
     }
     else{
-        alert("No se encontraron personas en la comuna ingresada: " + comuna)
+        alert("No se encontraron personas en la comuna ingresada: " + filterComuna.value)
         return
     }
     Imprimir(resultado)
@@ -53,27 +63,17 @@ function agregarPersona(){
     return true
 }
 
-function Imprimir(arreglo){
+function Imprimir(data){
     // Obtener el elemento div donde se mostrará el arreglo
-    var contenedor = document.getElementById("resultado");
-    contenedor.innerHTML = ""
-    // Crear un elemento ul (lista desordenada)
-    var lista = document.createElement("ul");
+    if (data == null)
+        data = listaPersonas
+    const table = createTableFromData(data)
+    tableContainer.innerHTML = '';
+    tableContainer.appendChild(table);
+}
 
-    // Iterar sobre los objetos del arreglo y mostrar sus propiedades
-    arreglo.forEach(function(objeto) {
-        var li = document.createElement("li");
-        // Crear un string con las propiedades del objeto
-        var propiedades = Object.keys(objeto).map(function(key) {
-            return key + ": " + objeto[key];
-        }).join(", ");
-        li.textContent = "{" + propiedades + "}";
-        lista.appendChild(li);
-    });
-
-    // Agregar la lista al contenedor
-    contenedor.appendChild(lista);
-
+function LimpiarTabla(){
+    tableContainer.innerHTML = '';
 }
 
 /*
@@ -105,12 +105,14 @@ while (opcion != 4)
     }
 }
 */
-const btn =  document.getElementById("btnAdd")
-const container = document.getElementById("container")
 
 btn.addEventListener("click", ()=>{
     if (agregarPersona()) 
         crearTarjeta(container)
+})
+
+btnFilter.addEventListener("click", ()=>{
+    filtrarComuna()
 })
 
 function crearTarjeta(container){
@@ -120,19 +122,48 @@ function crearTarjeta(container){
     <p>${direccion.value}</p>
     <p>${comuna.value}</p>
     `
+    container.innerHTML = '';
     container.appendChild(tarjeta)
 }
 
-var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
-triggerTabList.forEach(function (triggerEl) {
-  var tabTrigger = new bootstrap.Tab(triggerEl)
+/********Captura clic ******** */
+const triggerTabList = document.querySelectorAll('#pills button')
+triggerTabList.forEach(triggerEl => {
+  const tabTrigger = new bootstrap.Tab(triggerEl)
 
-  triggerEl.addEventListener('click', function (event) {
+  triggerEl.addEventListener('click', event => {
     event.preventDefault()
     tabTrigger.show()
-  })
+})
 })
 
+function createTableFromData(data) {
+    const table = document.createElement('table');
+  
+    const headerRow = document.createElement('tr');
+  
+    const keys = Object.keys(data[0]);
+  
+    keys.forEach(key => {
+      const th = document.createElement('th');
+      th.textContent = key;
+      headerRow.appendChild(th);
+    });
+  
+    table.appendChild(headerRow);
+  
+    data.forEach(item => {
+      const row = document.createElement('tr');
+  
+      keys.forEach(key => {
+        const td = document.createElement('td');
+        td.textContent = item[key];
+        row.appendChild(td);
+      });
+      table.appendChild(row);
+    });
+   return table;
+  }
 
-
-
+  
+  
