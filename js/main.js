@@ -21,6 +21,21 @@ let p5 = new Persona("Claudio", "Salesanos 97465", "Providencia")
 let p6 = new Persona("Max", "Los libertadores 123", "Santiago")
 
 var listaPersonas = [p1,p2,p3,p4,p5,p6]
+limpiarLocalStorage()
+actualizarLocalStorage()
+listaPersonas = []
+
+function actualizarLocalStorage(){
+    localStorage.setItem('listaPersonas', JSON.stringify(listaPersonas));
+}
+
+function obtenerListaPersonas(){
+    listaPersonas = JSON.parse(localStorage.getItem('listaPersonas'));
+}
+
+function limpiarLocalStorage(){
+    localStorage.clear();
+}
 
 function filtrarComuna(){
     if (filterComuna.value == "")
@@ -59,6 +74,7 @@ function agregarPersona(){
     }
 
     listaPersonas.push(persona)
+    actualizarLocalStorage()
     console.table(listaPersonas)
     return true
 }
@@ -66,7 +82,10 @@ function agregarPersona(){
 function Imprimir(data){
     // Obtener el elemento div donde se mostrará el arreglo
     if (data == null)
+    {
+        obtenerListaPersonas()
         data = listaPersonas
+    }
     const table = createTableFromData(data)
     tableContainer.innerHTML = '';
     tableContainer.appendChild(table);
@@ -107,8 +126,11 @@ while (opcion != 4)
 */
 
 btn.addEventListener("click", ()=>{
-    if (agregarPersona()) 
+    if (agregarPersona())
+    { 
         crearTarjeta(container)
+        alert("registro ingresado.")
+    }
 })
 
 btnFilter.addEventListener("click", ()=>{
@@ -118,6 +140,7 @@ btnFilter.addEventListener("click", ()=>{
 function crearTarjeta(container){
     const tarjeta =  document.createElement("div")
     tarjeta.innerHTML= `
+    <br>
     <h2>${nombre.value}</h2>
     <p>${direccion.value}</p>
     <p>${comuna.value}</p>
