@@ -6,6 +6,7 @@ const tableContainer = document.getElementById('table-container');
 const btn =  document.getElementById("btnAdd")
 const container = document.getElementById("containerAdd")
 const btnFilter =  document.getElementById("btnFilter")
+const mensaje =  document.getElementById("mensajes")
 
 const Persona = function(nombre, direccion, comuna){
     this.nombre = nombre
@@ -38,20 +39,24 @@ function limpiarLocalStorage(){
 }
 
 function filtrarComuna(){
-    if (filterComuna.value == "")
+    if (comunaFilter.value == "")
     {
-        alert("Datos incorrectos. ")
+        //alert("Datos incorrectos. ")
+        mensaje.innerText="Datos incorrectos"
         return 
     }   
 
-    let resultado = listaPersonas.filter((x)=>x.comuna.toUpperCase().includes(filterComuna.value.toUpperCase()))
+    obtenerListaPersonas()
+    let resultado = listaPersonas.filter((x)=>x.comuna.toUpperCase().includes(comunaFilter.value.toUpperCase()))
 
     if (resultado.length > 0)
     {
         console.table(resultado)
     }
     else{
-        alert("No se encontraron personas en la comuna ingresada: " + filterComuna.value)
+        //alert("No se encontraron personas en la comuna ingresada: " + filterComuna.value)
+        LimpiarTabla()
+        mensaje.innerText="No se encontraron personas en la comuna ingresada: " + comunaFilter.value
         return
     }
     Imprimir(resultado)
@@ -61,7 +66,8 @@ function agregarPersona(){
     
     if (nombre.value == "" || direccion.value == "" || comuna.value == "")
     {
-        alert("Datos incorrectos. ")
+        //alert("Datos incorrectos. ")
+        mensaje.innerText="Datos incorrectos"
         return 
     }   
 
@@ -69,7 +75,8 @@ function agregarPersona(){
 
     if (listaPersonas.some((x)=>x.nombre.trim().toUpperCase() === persona.nombre.trim().toUpperCase()))
     {
-        alert("el nombre ya existe")
+        //alert("el nombre ya existe")
+        mensaje.innerText="el nombre ya existe"
         return
     }
 
@@ -86,13 +93,14 @@ function Imprimir(data){
         obtenerListaPersonas()
         data = listaPersonas
     }
+    LimpiarTabla()
     const table = createTableFromData(data)
-    tableContainer.innerHTML = '';
     tableContainer.appendChild(table);
 }
 
 function LimpiarTabla(){
     tableContainer.innerHTML = '';
+    mensaje.innerHTML = '';
 }
 
 /*
@@ -129,7 +137,8 @@ btn.addEventListener("click", ()=>{
     if (agregarPersona())
     { 
         crearTarjeta(container)
-        alert("registro ingresado.")
+        //alert("registro ingresado.")
+        mensaje.innerText="registro ingresado."
     }
 })
 
